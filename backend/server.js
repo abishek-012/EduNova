@@ -169,6 +169,141 @@ app.post("/api/subjects", (req, res) => {
   res.json(normalized);
 });
 
+// ---------------- CALENDAR ----------------
+// Static catalog of holidays and events tailored for Jharkhand
+// Fields: { date: 'YYYY-MM-DD', title: string, type: 'national'|'state'|'local'|'event', color?: string }
+// Note: Some festivals move each year; below includes curated 2025 dates and fixed-date holidays.
+const CALENDAR_EVENTS = [
+  // National holidays (India)
+  { date: "2025-01-01", title: "New Year's Day", type: "event" },
+  { date: "2025-01-26", title: "Republic Day", type: "national" },
+  { date: "2025-01-14", title: "Makar Sankranti / Pongal", type: "national" },
+  {
+    date: "2025-03-08",
+    title: "International Women's Day (Observance)",
+    type: "event",
+  },
+  { date: "2025-08-15", title: "Independence Day", type: "national" },
+  { date: "2025-10-02", title: "Gandhi Jayanti", type: "national" },
+  { date: "2025-12-25", title: "Christmas", type: "national" },
+  { date: "2025-04-14", title: "Ambedkar Jayanti", type: "national" },
+  { date: "2025-05-01", title: "Labour Day / May Day", type: "national" },
+  { date: "2025-09-05", title: "Teachers' Day (India)", type: "event" },
+  { date: "2025-11-14", title: "Children's Day (India)", type: "event" },
+  { date: "2025-04-18", title: "Good Friday", type: "national" },
+  { date: "2025-05-12", title: "Buddha Purnima (approx)", type: "national" },
+
+  // Jharkhand State holidays
+  {
+    date: "2025-11-15",
+    title: "Jharkhand Foundation Day (Birsa Munda Jayanti)",
+    type: "state",
+  },
+  // Many tribal festivals are date-shifted; provide 2025 representative dates
+  { date: "2025-04-06", title: "Sarhul (Ranchi region)", type: "state" },
+  { date: "2025-09-13", title: "Karma Festival (approx)", type: "state" },
+  { date: "2025-09-10", title: "Karma Festival (observed)", type: "state" },
+  {
+    date: "2025-11-17",
+    title: "Chhath Puja (Nahay Khay) (approx)",
+    type: "local",
+  },
+  {
+    date: "2025-11-18",
+    title: "Chhath Puja (Kharna/Arghya) (approx)",
+    type: "local",
+  },
+
+  // Local/Regional observances & events (Jharkhand)
+  { date: "2025-01-23", title: "Netaji Jayanti (observed)", type: "local" },
+  { date: "2025-03-29", title: "Holi (approx, 2025)", type: "national" },
+  {
+    date: "2025-03-31",
+    title: "Holi - Second Day (Dhulandi) (approx)",
+    type: "national",
+  },
+  {
+    date: "2025-04-10",
+    title: "Eid al-Fitr (approx, subject to moon)",
+    type: "local",
+  },
+  {
+    date: "2025-10-01",
+    title: "Durga Puja (Saptami-Navami, approx)",
+    type: "local",
+  },
+  {
+    date: "2025-10-02",
+    title: "Durga Puja (Ashtami, overlaps Gandhi Jayanti)",
+    type: "local",
+  },
+  { date: "2025-10-03", title: "Durga Puja (Navami)", type: "local" },
+  { date: "2025-10-04", title: "Vijaya Dashami (Dussehra)", type: "local" },
+  { date: "2025-10-20", title: "Diwali (approx)", type: "local" },
+  { date: "2025-10-21", title: "Govardhan Puja (approx)", type: "local" },
+  { date: "2025-10-22", title: "Bhai Dooj (approx)", type: "local" },
+  { date: "2025-08-17", title: "Janmashtami (observed)", type: "local" },
+  {
+    date: "2025-09-17",
+    title: "Janmashtami (regional observance)",
+    type: "local",
+  },
+  { date: "2025-08-09", title: "Raksha Bandhan (approx)", type: "local" },
+
+  // Generic academic events/examples
+  {
+    date: "2025-02-10",
+    title: "University Sports Meet (Ranchi)",
+    type: "event",
+  },
+  { date: "2025-05-05", title: "Semester Exams Begin", type: "event" },
+  { date: "2025-05-25", title: "Semester Exams End", type: "event" },
+
+  // International observances (non-holiday) commonly noted
+  { date: "2025-06-21", title: "International Day of Yoga", type: "event" },
+  { date: "2025-04-22", title: "Earth Day", type: "event" },
+  { date: "2025-06-05", title: "World Environment Day", type: "event" },
+  { date: "2025-10-05", title: "World Teachers' Day", type: "event" },
+];
+
+function isValidYearMonth(year, month) {
+  const y = Number(year);
+  const m = Number(month);
+  return Number.isInteger(y) && Number.isInteger(m) && m >= 1 && m <= 12;
+}
+
+// GET /api/calendar?year=2025&month=9
+// Returns events for the given month in Jharkhand with type categorization and default colors
+app.get("/api/calendar", (req, res) => {
+  const { year, month } = req.query;
+
+  if (!isValidYearMonth(year, month)) {
+    return res.status(400).json({ error: "Invalid 'year' or 'month' (1-12)" });
+  }
+
+  const pad = (n) => String(n).padStart(2, "0");
+  const ym = `${year}-${pad(month)}`;
+
+  const DEFAULT_COLORS = {
+    national: "#EF4444", // red
+    state: "#10B981", // emerald
+    local: "#3B82F6", // blue
+    event: "#F59E0B", // amber
+  };
+
+  const events = CALENDAR_EVENTS.filter((e) => e.date.startsWith(ym)).map(
+    (e) => ({ ...e, color: e.color || DEFAULT_COLORS[e.type] })
+  );
+
+  return res.json({
+    year: Number(year),
+    month: Number(month),
+    region: "Jharkhand",
+    events,
+    colors: DEFAULT_COLORS,
+  });
+});
+
 // ---------- START SERVER ----------
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

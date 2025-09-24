@@ -33,8 +33,8 @@ export default function ElevenLabsAssistant() {
           AI Study Assistant
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col items-center justify-center p-0">
-        {/* Eleven Labs Embed */}
+      <CardContent className="flex-1 flex items-center justify-center p-0">
+        {/* Eleven Labs Embed filling the card */}
         <elevenlabs-convai
           agent-id="agent_4001k5vjrs41ep4sa466f8bh9jc4"
           style={{

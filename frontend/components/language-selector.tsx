@@ -17,7 +17,9 @@ export default function LanguageSelector() {
           {languages[language].nativeName}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+
+      {/* Add key={language} to force re-render */}
+      <DropdownMenuContent align="end" key={language}>
         {Object.entries(languages).map(([code, { name, nativeName }]) => (
           <DropdownMenuItem
             key={code}

@@ -38,7 +38,12 @@ export default function AttendanceSystem() {
     { id: "2", name: "Bob Smith", rollNumber: "CS002", status: "pending" },
     { id: "3", name: "Carol Davis", rollNumber: "CS003", status: "pending" },
     { id: "4", name: "David Wilson", rollNumber: "CS004", status: "pending" },
-    { id: "5", name: "Eva Brown", rollNumber: "CS005", status: "pending" },
+    { id: "5", name: "Harisankar", rollNumber: "CS005", status: "pending" },
+    { id: "6", name: "Deepankar Sharma", rollNumber: "CS006", status: "pending" },
+    { id: "7", name: "Deepan Bomb", rollNumber: "CS007", status: "pending" },
+    { id: "8", name: "Alwin", rollNumber: "CS008", status: "pending" },
+    { id: "9", name: "Abishek Kandan", rollNumber: "CS009", status: "pending" },
+    { id: "10", name: "Harini Narayanasamay", rollNumber: "CS010", status: "pending" },
   ])
   const [sessions, setSessions] = useState<AttendanceSession[]>([
     {
