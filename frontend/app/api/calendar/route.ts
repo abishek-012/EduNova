@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const DEFAULT_BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
+const DEFAULT_BACKEND = process.env.BACKEND_URL || "https://edunova-osoo.onrender.com/api";
 
 export async function GET(request: Request) {
   const { search } = new URL(request.url);
