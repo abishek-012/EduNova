@@ -19,7 +19,7 @@ export default function TimetableGenerator() {
   const [newCourseName, setNewCourseName] = useState("");
   const [newCourseCount, setNewCourseCount] = useState<number>(0);
   const [isGenerating, setIsGenerating] = useState(false);
-  const API_BASE = "http://localhost:5000/api";
+  const API_BASE = "https://edunova-osoo.onrender.com/api";
 
   // Fetch subjects from backend on load
   useEffect(() => {
